@@ -1,0 +1,46 @@
+FROM scratch
+ADD config/image/centos-7-docker.tar.xz /
+
+LABEL org.label-schema.schema-version="1.0" \
+    org.label-schema.name="CentOS Base Image" \
+    org.label-schema.vendor="CentOS" \
+    org.label-schema.license="GPLv2" \
+    org.label-schema.build-date="20181006"
+
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+VOLUME [ "/sys/fs/cgroup" ]
+
+RUN yum -y install epel-release openssh openssh-server openssh-clients wget iproute git sudo tree ;
+
+ADD config/ssh.tgz /root/
+ADD config/sshd_config /etc/ssh/sshd_config
+ADD config/sshd-banner.jenkins /etc/ssh/sshd-banner
+ADD config/bashrc /etc/bashrc
+ADD config/DIR_COLORS /etc/DIR_COLORS_ADAM
+ADD config/jenkins.service /etc/systemd/system/jenkins.service
+
+RUN chown -R root:root /root/.ssh ; \
+sed -i "s,account    required     pam_nologin.so,#account    required     pam_nologin.so,g" /etc/pam.d/sshd ; \
+sed -i "s,#   StrictHostKeyChecking ask,   StrictHostKeyChecking no,g" /etc/ssh/ssh_config ; \
+chmod 600 /root/.ssh/authorized_keys ; rm /etc/localtime ; ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime ; \
+yum -y install python36-pip.noarch java-11-openjdk-devel java-11-openjdk ; \
+pip3.6 install --upgrade pip ; pip install ansible ; pip install pyvmomi ; \
+wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo ; \
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key ; \
+yum -y install jenkins ; chkconfig jenkins on ; \
+sed -i "s,JENKINS_HOME=\"/var/lib/jenkins\",JENKINS_HOME=\"/jenkins\",g" /etc/sysconfig/jenkins ; \
+sed -i "s,JENKINS_USER=\"jenkins\",JENKINS_USER=\"root\",g" /etc/sysconfig/jenkins ; \
+systemctl enable jenkins ; \
+mkdir -p /jenkins ; userdel -r jenkins ; \
+yum -y update ; yum clean all
+
+EXPOSE 22/tcp 8080/tcp
+CMD ["/usr/sbin/init"]

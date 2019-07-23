@@ -1,0 +1,14 @@
+[Unit]
+Description=Jenkins server Daemon
+
+[Service]
+EnvironmentFile=/etc/sysconfig/jenkins
+ExecStart=/usr/bin/java -jar /usr/lib/jenkins/jenkins.war
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=60s
+User=root
+
+[Install]
+WantedBy=multi-user.target

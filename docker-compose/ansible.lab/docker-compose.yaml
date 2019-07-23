@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    image: jenkins/2.176.1
+    ports:
+      - 1120:22/tcp
+      - 1121:8080/tcp
+    networks:
+      - lab
+    privileged: true
+    container_name: jenkins
+    hostname: jenkins
+
+  lab-01:
+    build:
+      context: .
+      dockerfile: Dockerfile.lab
+    image: lab/centos7.6:1.1
+    ports:
+      - 1122:22/tcp
+    networks:
+      - lab
+    privileged: true
+    container_name: lab-01
+    hostname: lab-01
+
+  lab-02:
+    build:
+      context: .
+      dockerfile: Dockerfile.lab
+    image: lab/centos7.6:1.1
+    ports:
+      - 1123:22/tcp
+    networks:
+      - lab
+    privileged: true
+    container_name: lab-02
+    hostname: lab-02
+    
+  lab-03:
+    build:
+      context: .
+      dockerfile: Dockerfile.lab
+    image: lab/centos7.6:1.1
+    ports:
+      - 1124:22/tcp
+    networks:
+      - lab
+    privileged: true
+    container_name: lab-03
+    hostname: lab-03
+ 
+networks:
+  lab:
