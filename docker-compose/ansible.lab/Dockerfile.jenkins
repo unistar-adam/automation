@@ -18,7 +18,7 @@ rm -f /lib/systemd/system/basic.target.wants/*;\
 rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ "/sys/fs/cgroup" ]
 
-RUN yum -y install epel-release openssh openssh-server openssh-clients wget iproute git sudo tree ;
+RUN yum -y update ; yum -y install epel-release openssh openssh-server openssh-clients wget iproute git sudo tree ;
 
 ADD config/ssh.tgz /root/
 ADD config/sshd_config /etc/ssh/sshd_config
@@ -40,7 +40,7 @@ sed -i "s,JENKINS_HOME=\"/var/lib/jenkins\",JENKINS_HOME=\"/jenkins\",g" /etc/sy
 sed -i "s,JENKINS_USER=\"jenkins\",JENKINS_USER=\"root\",g" /etc/sysconfig/jenkins ; \
 systemctl enable jenkins ; \
 mkdir -p /jenkins ; userdel -r jenkins ; \
-yum -y update ; yum clean all
+yum clean all
 
 EXPOSE 22/tcp 8080/tcp
 CMD ["/usr/sbin/init"]
