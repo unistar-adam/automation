@@ -18,7 +18,7 @@ rm -f /lib/systemd/system/basic.target.wants/*;\
 rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ "/sys/fs/cgroup" ]
 
-RUN yum -y update ; yum -y install epel-release openssh openssh-server openssh-clients wget iproute git sudo tree ;
+RUN yum -y update ; yum -y install epel-release openssh openssh-server openssh-clients wget iproute git sudo tree vim;
 
 ADD config/ssh.tgz /root/
 ADD config/sshd_config /etc/ssh/sshd_config
@@ -26,6 +26,7 @@ ADD config/sshd-banner.jenkins /etc/ssh/sshd-banner
 ADD config/bashrc /etc/bashrc
 ADD config/DIR_COLORS /etc/DIR_COLORS_ADAM
 ADD config/jenkins.service /etc/systemd/system/jenkins.service
+ADD config/vimrc /root/.vimrc
 
 RUN chown -R root:root /root/.ssh ; \
 sed -i "s,account    required     pam_nologin.so,#account    required     pam_nologin.so,g" /etc/pam.d/sshd ; \

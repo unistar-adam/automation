@@ -19,7 +19,7 @@ rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ "/sys/fs/cgroup" ]
 
 RUN yum -y update ; \
-yum -y install epel-release openssh openssh-server openssh-clients wget tcping iproute sudo tree ; \
+yum -y install epel-release openssh openssh-server openssh-clients wget tcping iproute sudo tree vim; \
 yum clean all ; \
 groupadd -r automation; useradd -r -m -g automation -s /bin/bash ansible
 
@@ -29,6 +29,7 @@ ADD config/sshd_config /etc/ssh/sshd_config
 ADD config/sshd-banner /etc/ssh/sshd-banner
 ADD config/bashrc /etc/bashrc
 ADD config/DIR_COLORS /etc/DIR_COLORS_ADAM
+ADD config/vimrc /root/.vimrc
 
 RUN chown -R root:root /root/.ssh ; chown -R ansible:automation /home/ansible/.ssh ; \
 sed -i "s,account    required     pam_nologin.so,#account    required     pam_nologin.so,g" /etc/pam.d/sshd ; \
