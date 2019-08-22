@@ -12,6 +12,8 @@ services:
     networks:
       ansible:
         ipv4_address: 192.168.250.254
+    volumes:
+      - ~/lab/utility:/root/utility
     privileged: true
     container_name: jenkins
     hostname: jenkins
