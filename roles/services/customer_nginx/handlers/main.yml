@@ -1,0 +1,10 @@
+---
+- name: enable service nginx
+  systemd:
+    name: nginx
+    state: started
+
+- name: delete source code with Compile 
+  shell: rm -rf /usr/local/src/*
+  args:
+    warn: false

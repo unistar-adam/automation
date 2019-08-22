@@ -1,0 +1,36 @@
+---
+packages:
+  - gcc
+  - gcc-c++
+  - pcre
+  - pcre-devel
+  - libxslt-devel
+  - zlib
+  - zlib-devel
+  - openssl
+  - openssl-devel
+  - make
+  - geoip-devel
+  - autoconf
+  - automake
+  - gd 
+  - gd-devel
+  - libxml2
+  - libxml2-devel
+  - GeoIP
+  - GeoIP-devel
+  - git
+  - libtool
+
+create_files:
+  - /usr/lib64/nginx/modules
+  - /etc/nginx/certs
+  - /etc/GeoIP2
+
+tarballs:
+  - nginx-1.15.7.tar.gz
+  - libmaxminddb.tar.gz
+  - ngx_http_geoip2_module.tar.gz
+  - nginx-module-vts.tar.gz
+  - nginx-module-sts.tar.gz
+  - nginx-module-stream-sts.tar.gz

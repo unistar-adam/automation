@@ -1,0 +1,262 @@
+---
+# https://www.cnblogs.com/stulzq/p/9291223.html
+- name: Install package
+  yum:
+    name: "{{ packages }}"
+    state: present
+
+- name: Create group nginx
+  group:
+    name: nginx
+    gid: "1000"
+    state: present
+
+- name: Add the user 'nginx' with a specific uid and a primary group of 'nginx'
+  user:
+    name: nginx
+    comment: nginx user
+    uid: "1000"
+    group: nginx
+    home: "/var/cache/nginx"
+    shell: /sbin/nologin
+
+- name: Extract files to /usr/local/src
+  unarchive:
+    src: "{{ item }}"
+    dest: "/usr/local/src/"
+  with_items: "{{ tarballs }}"  
+
+# - name: Extract nginx to /usr/local/src
+#   unarchive:
+#     src: "nginx-1.15.7.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: Extract libmaxminddb to /usr/local/src
+#   unarchive:
+#     src: "libmaxminddb.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: git libmaxminddb
+#   shell: "git clone --recursive https://github.com/maxmind/libmaxminddb"
+#   args:
+#     chdir: "/usr/local/src/"
+#     executable: "/bin/bash"
+
+- name: 配置 libmaxminddb
+  shell: "./bootstrap ; ./configure"
+  args:
+    chdir: "/usr/local/src/libmaxminddb"
+    executable: "/bin/bash"
+
+- name: 編譯 libmaxminddb
+  shell: "make;make check;make install;ldconf;make clean"
+  args:
+    chdir: "/usr/local/src/libmaxminddb"
+    executable: "/bin/bash"
+
+# - name: git ngx_http_geoip2_module
+#   shell: "git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git"
+#   args:
+#     chdir: "/usr/local/src/"
+#     executable: "/bin/bash"
+
+# - name: Extract ngx_http_geoip2_module to /usr/local/src
+#   unarchive:
+#     src: "ngx_http_geoip2_module.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: git nginx-module-vts
+#   shell: "git clone --recursive https://github.com/vozlt/nginx-module-vts.git"
+#   args:
+#     chdir: "/usr/local/src/"
+#     executable: "/bin/bash"
+
+# - name: Extract nginx-module-vts to /usr/local/src
+#   unarchive:
+#     src: "nginx-module-vts.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: git nginx-module-sts
+#   shell: "git clone --recursive https://github.com/vozlt/nginx-module-sts.git"
+#   args:
+#     chdir: "/usr/local/src/"
+#     executable: "/bin/bash"
+
+# - name: Extract nginx-module-sts to /usr/local/src
+#   unarchive:
+#     src: "nginx-module-sts.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: git nginx-module-stream-sts
+#   shell: "git clone --recursive git://github.com/vozlt/nginx-module-stream-sts.git"
+#   args:
+#     chdir: "/usr/local/src/"
+#     executable: "/bin/bash"
+
+# - name: Extract nginx-module-stream-sts to /usr/local/src
+#   unarchive:
+#     src: "nginx-module-stream-sts.tar.gz"
+#     dest: "/usr/local/src/"
+
+- name: 配置 nginx
+  command: >
+    ./configure --prefix=/etc/nginx \
+    --sbin-path=/usr/sbin/nginx \
+    --modules-path=/usr/lib64/nginx/modules \
+    --conf-path=/etc/nginx/nginx.conf \
+    --error-log-path=/var/log/nginx/error.log \
+    --http-log-path=/var/log/nginx/access.log \
+    --pid-path=/var/run/nginx.pid \
+    --lock-path=/var/run/nginx.lock \
+    --http-client-body-temp-path=/var/cache/nginx/client_temp \
+    --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+    --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+    --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+    --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+    --user=nginx --group=nginx \
+    --with-compat \
+    --with-file-aio \
+    --with-threads \
+    --with-http_addition_module \
+    --with-http_auth_request_module \
+    --with-http_dav_module \
+    --with-http_flv_module \
+    --with-http_gunzip_module \
+    --with-http_gzip_static_module \
+    --with-http_mp4_module \
+    --with-http_random_index_module \
+    --with-http_realip_module \
+    --with-http_secure_link_module \
+    --with-http_slice_module \
+    --with-http_ssl_module \
+    --with-http_stub_status_module \
+    --with-http_sub_module \
+    --with-http_v2_module \
+    --with-http_xslt_module \
+    --with-http_image_filter_module \
+    --with-mail \
+    --with-mail_ssl_module \
+    --with-stream \
+    --with-stream_realip_module \
+    --with-stream_ssl_module \
+    --with-stream_ssl_preread_module \
+    --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+    --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' \
+    --add-module=/usr/local/src/ngx_http_geoip2_module \
+    --add-module=/usr/local/src/nginx-module-vts \
+    --add-module=/usr/local/src/nginx-module-sts \
+    --add-module=/usr/local/src/nginx-module-stream-sts
+  args:
+    chdir: "/usr/local/src/nginx-1.15.7"
+
+- name: 編譯 nginx
+  shell: "make;make modules;make install;make clean"
+  args:
+    chdir: "/usr/local/src/nginx-1.15.7"
+    executable: "/bin/bash"
+
+- name: copy startup file
+  copy:
+    src: "nginx.service"
+    dest: "/usr/lib/systemd/system/"
+
+- name: Creates directory certs/modules for nginx
+  file: 
+    path: "{{ create_files }}"
+    state: directory
+    # owner: "nginx"
+    # group: "nginx"
+    # mode: "0775"
+
+# - name: link modules for nginx
+#   file:
+#     src: "/usr/lib64/nginx/modules"
+#     dest: "/etc/nginx/modules"
+#     state: link
+
+- name: copy GeoLite2-Country
+  copy:
+    src: "GeoLite2-Country.mmdb"
+    dest: "/etc/GeoIP2/"
+
+- name: link GeoIP2 for nginx
+  file:
+    src: "/etc/GeoIP2"
+    dest: "/etc/nginx/GeoIP2"
+    state: link
+
+# - name: copy nginx.conf and Geofiles to /etc/nginx
+#   copy:
+#     src: "{{ geofiles }}"
+#     dest: "/etc/nginx/"
+#     backup: yes
+
+- name: copy nginx.conf
+  copy:
+    src: "nginx.conf"
+    dest: "/etc/nginx/"
+    backup: yes
+
+# - name: copy geoblocker
+#   copy:
+#     src: "geoblocker"
+#     dest: "/etc/nginx/"
+#     backup: yes
+
+- name: copy whitelistip
+  copy:
+    src: "whitelistip"
+    dest: "/etc/nginx/"
+    backup: yes
+
+- name: copy default.conf to /etc/nginx/conf.d
+  copy:
+    src: "default.conf"
+    dest: "/etc/nginx/conf.d/"
+    backup: yes
+
+- name: copy default_ssl.conf to /etc/nginx/conf.d
+  copy:
+    src: "default_ssl.conf"
+    dest: "/etc/nginx/conf.d/"
+    backup: yes
+
+- name: link libmaxminddb.so.0 to /lib64 
+  file:
+    src: "/usr/local/lib/libmaxminddb.so.0"
+    dest: "/lib64/libmaxminddb.so.0"
+    state: link
+
+- name: enable service nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+  notify:
+    - enable service nginx
+    - delete source code with Compile
+
+# https://dev.maxmind.com/geoip/geoipupdate/#Step_1_8211_Install_GeoIP_Update
+# - name: Extract geoipupdate-3.1.1 to /usr/local/src
+#   unarchive:
+#     src: "geoipupdate-3.1.1.tar.gz"
+#     dest: "/usr/local/src/"
+
+# - name: 配置 geoipupdate-3.1.1
+#   command: "./configure --prefix=/"
+#   args:
+#     chdir: "/usr/local/src/geoipupdate-3.1.1"
+
+# - name: 編譯 geoipupdate-3.1.1
+#   shell: "make;make install;make clean"
+#   args:
+#     chdir: "/usr/local/src/geoipupdate-3.1.17"
+#     executable: "/bin/bash"
+
+# - name: Nginx modules
+#   shell: "nginx -V 2>&1 | tr -- '\n' | grep module"
+#   register: module
+
+# - debug:
+#     msg: 
+#     - "{{ module.stdout_lines}}"

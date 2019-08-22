@@ -1,0 +1,11 @@
+map $geoip2_data_country_code $allowed_country {
+    default yes;
+    TW no;
+}
+
+geo $whitelistip {
+default 0;
+61.6.79.253/32 1;
+10.0.0.0/8 1;
+192.168.0.0/16 1;
+}

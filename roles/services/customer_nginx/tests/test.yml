@@ -1,0 +1,9 @@
+---
+- name: Install
+  hosts: "{{ hostname }}"
+  tasks:
+    - name: Extract tarballs to /usr/local/src
+      unarchive:
+        src: "{{ tarballs }}"
+        dest: "/usr/local/src"
+        remote_src: yes

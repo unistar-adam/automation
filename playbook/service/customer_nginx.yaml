@@ -1,0 +1,36 @@
+---
+#################################################################################
+# Install List
+# 1. Nginx 1.15.7
+# 2. libmaxminddb
+# 3. GeoIP2
+# 4. nginx-module-stream-sts
+# 5. nginx-module-sts
+# 6. nginx-module-vts
+#################################################################################
+- name: Install
+  hosts: "{{ hostname }}"
+  become: True
+  # become_user: root
+  # become_method: sudo
+  roles:
+    - customer_nginx
+  # tasks:
+  #   - name: Install package
+  #     yum:
+  #       name: "{{ packages }}"
+  #       state: present
+    # - name: copy file
+    #   copy:
+    #     src: "{{ role_path }}/files/nginx-1.15.7.tar.gz"
+    #     dest: /root/nginx-1.15.7.tar.gz
+      # vars:
+      #   packages:
+      #   - gcc
+      #   - pcre
+      #   - pcre-devel
+      #   - zlib
+      #   - zlib-devel
+      #   - openssl
+      #   - openssl-devel
+      #   - make
