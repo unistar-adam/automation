@@ -13,7 +13,7 @@ services:
       ansible:
         ipv4_address: 192.168.250.254
     volumes:
-      - ~/lab/utility:/root/utility
+      - /Users/adam.chen/Docker_Lab/abc/automation/python:/root/utility
     privileged: true
     container_name: jenkins
     hostname: jenkins
