@@ -14,6 +14,7 @@ services:
         ipv4_address: 192.168.250.254
     volumes:
       - /Users/adam.chen/Docker_Lab/abc/automation/python:/root/utility
+      - /Users/adam.chen/Docker_Lab/abc:/root/abc
     privileged: true
     container_name: jenkins
     hostname: jenkins

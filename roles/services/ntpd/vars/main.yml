@@ -1,0 +1,7 @@
+---
+ntp_server:
+  - server tick.stdtime.gov.tw prefer
+  - server tock.stdtime.gov.tw prefer
+  - server time.stdtime.gov.tw prefer
+  - server clock.stdtime.gov.tw
+  - server watch.stdtime.gov.tw

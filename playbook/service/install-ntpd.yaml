@@ -1,0 +1,6 @@
+---
+- name: Setting ntp client
+  hosts: "{{ hostname }}"
+  become: yes
+  roles:
+    - ntpd
