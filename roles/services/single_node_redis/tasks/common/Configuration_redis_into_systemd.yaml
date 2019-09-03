@@ -1,0 +1,49 @@
+- name: Configuration redis into systemd
+  block:
+    - name: create sytem service account groups
+      group:
+        name: redis
+        state: present
+        system: yes
+        gid: 996
+
+    - name: create sytem service account
+      user:
+        name: redis
+        groups: redis
+        uid: 996
+        state: present
+        shell: /sbin/nologin
+        system: yes
+        create_home: no
+
+    - name: create configuration file to /etc/redis
+      file:
+        path: /etc/redis
+        state: directory
+
+    - name: copy configuration to remote_src
+      copy:
+        src: /usr/local/src/redis/redis-5.0.5/redis.conf
+        dest: /etc/redis/redis.conf
+        remote_src: yes
+
+    - name: create systemctl unit file to /etc/systemd/system/
+      copy:
+        src: files/redis.service
+        dest: /etc/systemd/system/redis.service
+
+    - name: config systemctl unit file 
+      replace:
+        path: "{{ redis_config }}"
+        regexp: "^{{ item.src }}$"
+        replace: "{{ item.dst }}"
+      with_items:
+        - "{{ redis_replaces }}"
+
+    - name: enable and start redis service 
+      systemd:
+        state: started
+        enabled: yes
+        masked: no
+        name: redis

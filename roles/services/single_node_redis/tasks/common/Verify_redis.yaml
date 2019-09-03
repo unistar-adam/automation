@@ -1,0 +1,21 @@
+- name: Verify redis
+  block:
+    - name: Install verify package
+      yum:
+        name: "{{ verify_packages }}"
+        state: present
+    
+    - name: change test library with tcl
+      replace:
+        path: "{{ runtest_config }}"
+        regexp: "^{{ item.src }}$"
+        replace: "{{ item.dst }}"
+      with_items:
+        - "{{ runtest_replaces }}"
+
+    - name: run test
+      shell: make test
+      args:
+        chdir: /usr/local/src/redis/redis-5.0.5
+      register: make_test
+    - debug: msg="{{ make_test.stdout_lines }}"

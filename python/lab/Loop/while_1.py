@@ -1,5 +1,6 @@
 import random
 ans =  random.randint(0,10) #取從1到10的亂數
+
 print('請猜一個0~10的數字')
 play = True
 while(play):

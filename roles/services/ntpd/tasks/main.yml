@@ -22,3 +22,4 @@
 - name: show time_status
   debug:
     msg: "{{ tracking.stdout.split('\n') }}"
+    msg: "{{ tracking.stdout_lines }}"

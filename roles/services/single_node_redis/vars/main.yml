@@ -1,0 +1,24 @@
+---
+# vars file for single_node_redius
+packages:
+ - gcc
+ - make
+ - which
+
+verify_packages:
+ - tcl
+
+runtest_config: "/usr/local/src/redis/redis-5.0.5/runtest"
+
+runtest_replaces:
+- src: "TCL_VERSIONS=\"8.5 8.6\""
+  dst: "TCL_VERSIONS=\"8.5\""
+
+redis_config: /etc/redis/redis.conf
+
+redis_replaces:
+- src: "daemonize no"
+  dst: "daemonize yes"
+- src: "supervised no"
+  dst: "supervised systemd"
+

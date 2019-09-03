@@ -1,0 +1,37 @@
+- name: Install redis
+  block:
+    - name: Creates sourse code directory
+      file:
+        path: /usr/local/src/redis
+        state: directory
+
+    # - name: Download tarbal
+    #   get_url:
+    #     url: http://download.redis.io/releases/redis-5.0.5.tar.gz
+    #     dest: /usr/local/src/redius/redis-5.0.5.tar.gz
+
+    # - name: Extract redis into /usr/local/src/redis
+    #   unarchive:
+    #     src: /usr/local/src/redius/redis-5.0.5.tar.gz
+    #     dest: /usr/local/src/redis
+    #     remote_src: yes
+
+    - name: Extract redis into /usr/local/src/redius with http://download.redis.io/releases/redis-5.0.5.tar.gz
+      unarchive: 
+        src: http://download.redis.io/releases/redis-5.0.5.tar.gz
+        dest: /usr/local/src/redis
+        remote_src: yes
+
+    - name: compiler deps
+      shell: make hiredis lua jemalloc linenoise
+      args:
+        chdir: /usr/local/src/redis/redis-5.0.5/deps
+      register: make_deps
+    - debug: msg="{{ make_deps.stdout_lines }}"
+
+    - name: compiler redis
+      shell: make PREFIX=/redis install
+      args:
+        chdir: /usr/local/src/redis/redis-5.0.5
+      register: make
+    - debug: msg="{{ make.stdout_lines }}"

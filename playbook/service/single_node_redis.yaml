@@ -1,0 +1,6 @@
+---
+- name: Install single node redius
+  hosts: "{{ hostname }}"
+  become: True
+  roles:
+    - single_node_redis

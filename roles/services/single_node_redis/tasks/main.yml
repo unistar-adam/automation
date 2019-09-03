@@ -1,0 +1,15 @@
+---
+# tasks file for single_node_radius
+- name: Install package
+  yum:
+    name: "{{ packages }}"
+    state: present
+
+# Install redis
+- include_tasks: "{{ role_path }}/tasks/common/Install_redis.yaml"
+
+# Verify redis
+- include_tasks: "{{ role_path }}/tasks/common/Verify_redis.yaml"
+
+# Configuration redis into systemd
+- include_tasks: "{{ role_path }}/tasks/common/Configuration_redis_into_systemd.yaml"
