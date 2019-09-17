@@ -1,0 +1,47 @@
+---
+soa_list:
+  - domains: "rock-moment.net"
+    soa: "ns1.rock-moment.net"
+    hostmaster_email: "shangkuan.chen.gmail.com"
+    serial_number: "{{ lookup('pipe', 'date +%s') }}"
+    time_to_refresh: "21600"
+    time_to_retry: "3600"
+    time_to_expire: "604800"
+    minimum_TTL: "86400"
+    ns:
+      - name: ns1.rock-moment.net.
+    mx:
+      - name: mail1.rock-moment.net.
+        priority: 10
+    records:
+      - name: ns1
+        type: A
+        value: 172.20.0.4
+      - name: mail1
+        type: A
+        value: 172.20.0.4
+  
+
+  - domains: "254.168.192.in-addr.arpa"
+    soa: "254.168.192.in-addr.arpa"
+    hostmaster_email: "shangkuan.chen.gmail.com"
+    serial_number: "{{ lookup('pipe', 'date +%s') }}"
+    time_to_refresh: "21600"
+    time_to_retry: "3600"
+    time_to_expire: "604800"
+    minimum_TTL: "86400"
+    ns:
+      - name: ns1.rock-moment.net.
+    records:
+    - name: 1
+      type: PTR
+      value: ns1.rock-moment.net.
+    - name: 2
+      type: PTR
+      value: ns2.rock-moment.net.
+    - name: 1
+      type: PTR
+      value: mail1.rock-moment.net.  
+    - name: 2
+      type: PTR
+      value: mail2.rock-moment.net. 

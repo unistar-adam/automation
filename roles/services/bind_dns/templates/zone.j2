@@ -1,0 +1,26 @@
+$ORIGIN {{ item.domains }}.
+$TTL {{ item.minimum_TTL|default('86400') }}
+@   IN  SOA {{ item.soa }}. {{ item.hostmaster_email }} (
+    {{ item.serial_number|default('10') }} 
+    {{ item.time_to_refresh }}
+    {{ item.time_to_retry }}
+    {{ item.time_to_expire }}
+    {{ item.minimum_TTL }} )
+; serial_number time_to_refresh time_to_retry time_to_expire minimum_TTL
+{% if item.ns is defined %}
+{% for list in item.ns %}
+    IN  NS  {{ list.name }}
+{% endfor %}
+{% endif %}
+
+{% if item.mx is defined %}
+{% for list in item.mx %}
+    IN  MX  {{ list.priority }}   {{ list.name }}
+{% endfor %}
+{% endif %}
+
+{% if item.records is defined %}
+{% for record in item.records %}
+{{ record.name }}   IN  {{ record.type|default('A') }}  {{ record.value }}
+{% endfor %}
+{% endif %}

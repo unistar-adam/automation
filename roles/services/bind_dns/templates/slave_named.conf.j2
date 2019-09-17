@@ -1,0 +1,88 @@
+acl "trusted_clients" {
+{% for allow_list in allow_query %}
+{{ allow_list }};
+{% endfor%}
+};
+
+acl "trusted_ns" {
+{% for allow_list in allow_transfer %}
+{{ allow_list }};
+{% endfor%}
+};
+
+options {
+	listen-on port 53 { 
+	{% for listen in listen_on_interface %}
+	{{ listen }};
+	{% endfor%}
+	};
+	
+//	listen-on-v6 port 53 { ::1; };
+	directory 	"/var/named";
+	dump-file 	"/var/named/data/cache_dump.db";
+	statistics-file "/var/named/data/named_stats.txt";
+	memstatistics-file "/var/named/data/named_mem_stats.txt";
+	recursing-file  "/var/named/data/named.recursing";
+	secroots-file   "/var/named/data/named.secroots";
+	allow-query     { trusted_clients; };
+	allow-recursion { trusted_clients; };
+	allow-transfer { trusted_ns; };
+
+//	rely forders to do dns iterative query to save some traffic
+	forwarders	{ 
+	{% for forwarding_list in forwarding %}
+	{{ forwarding_list }};
+	{% endfor%}
+	};
+
+	/*
+	 - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+	 - If you are building a RECURSIVE (caching) DNS server, you need to enable
+	   recursion.
+	 - If your recursive DNS server has a public IP address, you MUST enable access
+	   control to limit queries to your legitimate users. Failing to do so will
+	   cause your server to become part of large scale DNS amplification
+	   attacks. Implementing BCP38 within your network would greatly
+	   reduce such attack surface
+	*/
+	recursion yes;
+
+	dnssec-enable yes;
+	dnssec-validation yes;
+
+	/* Path to ISC DLV key */
+	bindkeys-file "/etc/named.iscdlv.key";
+
+	managed-keys-directory "/var/named/dynamic";
+
+	pid-file "/run/named/named.pid";
+	session-keyfile "/run/named/session.key";
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+
+zone "." IN {
+	type hint;
+	file "named.ca";
+};
+
+// Slave Domain configuration
+{% for domain in soa_list %}
+zone "{{ domain.domains }}" {
+	type slave;
+	file "{{ domain.domains }}.zone";	
+	masters {
+	{% for list in domain.masters %}
+	{{ list }};
+	{% endfor %}
+	};
+};
+{% endfor %}
+
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";

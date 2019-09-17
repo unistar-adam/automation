@@ -1,0 +1,21 @@
+---
+soa_list:
+  - domains: "rock-moment.net"
+    soa: "ns1.rock-moment.net"
+    hostmaster_email: "shangkuan.chen.gmail.com"
+    time_to_refresh: "21600"
+    time_to_retry: "3600"
+    time_to_expire: "604800"
+    minimum_TTL: "86400"
+    masters:
+      - "172.20.0.4"
+
+  - domains: "254.168.192.in-addr.arpa"
+    soa: "254.168.192.in-addr.arpa"
+    hostmaster_email: "shangkuan.chen.gmail.com"
+    time_to_refresh: "21600"
+    time_to_retry: "3600"
+    time_to_expire: "604800"
+    minimum_TTL: "86400"
+    masters:
+      - "172.20.0.4"

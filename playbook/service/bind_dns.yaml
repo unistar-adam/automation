@@ -1,0 +1,5 @@
+---
+- name: Install Bind DNS
+  hosts: "{{ hostname }}"
+  roles:
+    - bind_dns

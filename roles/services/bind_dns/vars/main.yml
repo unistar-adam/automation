@@ -1,0 +1,18 @@
+---
+packages:
+  - bind
+  - bind-utils
+
+listen_on_interface:
+  - "any"
+
+allow_query:
+  - "any"
+
+allow_transfer:
+  - "any"
+
+forwarding:
+  - "168.95.1.1"
+  - "168.95.192.1"
+  -  "8.8.8.8"

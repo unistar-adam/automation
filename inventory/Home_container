@@ -5,3 +5,7 @@ lab-01 ansible_host=lab-01
 lab-02 ansible_host=lab-02
 lab-03 ansible_host=lab-03 
 
+[bind]
+lab-01 ansible_host=lab-01 ansible_user=root bind_role=master
+lab-02 ansible_host=lab-02 ansible_user=root bind_role=slave
+

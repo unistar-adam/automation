@@ -1,0 +1,48 @@
+- name: Install DNS BIND Master/Slaves
+  yum:
+    name: "{{ packages }}"
+    state: present
+
+- name: Configutation master service
+  block:
+    - include_vars:
+        file: master.yaml
+
+    - name: generation the /etc/named.conf file by master
+      template:
+        src: master_named.conf.j2
+        dest: /etc/named.conf
+        owner: named
+        group: named
+        mode: '0644'
+    
+    - name: create zone files
+      template:
+        src: zone.j2
+        dest: /var/named/{{ item.domains }}.zone
+        owner: named
+        group: named
+        mode: '0644'
+      with_items:
+        - "{{ soa_list }}"
+  when : bind_role == "master"
+
+- name: Configutation slave service
+  block:
+    - include_vars:
+        file: slave.yaml
+
+    - name: generation the /etc/named.conf file by slave
+      template:
+        src: slave_named.conf.j2
+        dest: /etc/named.conf
+        owner: named
+        group: named
+        mode: '0644'
+  when : bind_role == "slave"
+
+- name: enable and start DNS service
+  systemd:
+    name: "named"
+    enabled: yes
+    state: restarted
